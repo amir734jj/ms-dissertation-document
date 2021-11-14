@@ -1,0 +1,63 @@
+% \section{Attacks on \texorpdfstring{Ring-$\mathrm{LWE}$}{Ring-LWE} }
+% All the attacks defined in the following aim to solve the decision or search $\mathrm{LWE}$
+% problem. Since it is unknown how to exploit the structure of ideal lattices properly,
+% the best attacks against Ring-$\mathrm{LWE}$ are the best attacks against $\mathrm{LWE}$. The
+% attacks on $\mathrm{LWE}$ can be used to attack Ring-$\mathrm{LWE}$ since there exists an embedding
+% of Ring-$\mathrm{LWE}$ samples into the $\mathrm{LWE}$ problem. Further research can develop attacks which do exploit the special structure of ideal lattices, making the described attacks irrelevant for Ring-$\mathrm{LWE}$ instances. But fortunately for this thesis and ideal lattices, this is not yet the case.
+
+
+% \subsection{Embedding of \texorpdfstring{Ring-$\mathrm{LWE}$ into $\mathrm{LWE}$}{Ring-LWE into LWE}}
+% In this section we will briefly explain how a Ring-LWE sample can be embedded in
+% an $\mathrm{LWE}$ lattice such that the attacks against $\mathrm{LWE}$ can be applied.
+
+% Recall that an $\mathrm{LWE}$ lattice is of the form:
+% \[
+% 	\mathcal{L}_{q}(\textbf{A}) = \{ y \in \mathbb{Z}_q^n | \exists z \in \mathbb{Z}^n, y \equiv \textbf{A}z \bmod q \}
+% \]
+
+% Given a Ring-$\mathrm{LWE}$ sample $(a, b)$, construct $\textbf{A}$ such that the first $n$ rows are the coefficient vectors of $x^ia$ for $i \in [0, n - 1]$ and the last $m - n$ rows are small linear combinations of the first $n$ rows. Note that this makes it possible to freely choose $m$.
+
+% \section{Distinguishing attack}
+% A distinguishing attack is an attack which solves a decisional problem with some noticeable advantage. Distinguishing problems are of the form \textit{Is this true or
+% 	false?}, \textit{Is this 0 or 1?}, or \textit{Is this sequence sampled according to distribution $\chi$?}.
+
+% We will describe the distinguishing attack on $\mathrm{LWE}$ based on \cite{Lindner:2011:BKS:1964621.1964651}. Recall that the decisional $\mathrm{LWE}$ problem is to decide whether a sample $(\textbf{A}, \textbf{b})$ is of the form $(\textbf{A}, \textbf{A}^T\textbf{s} + \textbf{e})$, $\textbf{e} \leftarrow \chi_{\sigma}$ or sampled uniformly from $\textbf{A} \in \mathbb{Z}_q^{m\times n}$ and $\textbf{b} \in \mathbb{Z}_q$. Distinguishing with advantage $\epsilon$ means that an attacker can distinguish properly with probability $\frac{1}{2} + \epsilon$. The basic attack proceeds in two steps;
+% \begin{enumerate}
+% 	\item Find a short, non-zero, lattice vector $\textbf{v}$ such that $\textbf{v}\textbf{A} \equiv 0 \bmod q$.
+% 	\item Test if the inner product $\langle \textbf{v}, \textbf{b} \rangle$ is \quotes{close} to zero $\bmod q$.
+% \end{enumerate}
+
+% In step 1 we can determine a short vector in the $\mathrm{LWE}$-lattice using a lattice basis reduction method, e.g. $\mathrm{LLL}$ reduction.
+
+% Step 2 is based on the following: If $(\textbf{a}, \textbf{b})$ is a uniform sample, $\langle \textbf{v}, \textbf{b} \rangle$ will be \quotes{close} to zero with a small probability. But if $(\textbf{a}, \textbf{b}) = (\textbf{a}, \textbf{A}^T\textbf{s}+\textbf{e})$ then $\langle \textbf{v}, \textbf{b} \rangle = \langle \textbf{v}, \textbf{e} \rangle  \bmod q$, which is a sample of a discrete Gaussian distribution with parameter $||\textbf{v}||_{\sigma}$ and much more likely to be close to zero than the uniform distributions. If $||\textbf{v}||_{\sigma}$ is statistically not close to $q$, uniform random samples can be distinguished with advantage:
+% \[
+% 	e^{-\pi (\delta(m)^m q^{n/{m-1}} \sigma)^2}
+% \]
+
+
+% \section{Bounded Distance Decoding}
+% This decoding attack solves search-$\mathrm{LWE}$ by solving the corresponding Bounded
+% Distance Decoding ($\mathrm{BDD}$) problem. An LWE instance $(\textbf{A}, \textbf{t} =\textbf{A}^T \textbf{s} + \textbf{e})$ can be seen as a $\mathrm{BDD}$ problem on the lattice $\mathcal{L} = \mathcal{L}(\textbf{A}^T)$, where $\textbf{A}^T s \in \mathcal{L}$ is close to $\textbf{t}$.
+
+% The standard method for solving $\mathrm{BDD}$ is using the recursive Nearest Plane algorithm by Babai \cite{Babai1986}. The input of the algorithm is a reduced lattice basis $\{\textbf{b}_1, \dots , \textbf{b}_n\}$ of lattice $\mathcal{L}(\textbf{B})$ and target vector $\textbf{t}$, and the output is $\textbf{v} \in \mathcal{L}(B)$ which is close to $\textbf{t}$. The algorithm does this by setting $\textbf{b} = \textbf{t}$ and updating $\textbf{b}$ by $\textbf{b} = \textbf{b} - c_j \textbf{b}_j$
+% for $j$ decreasing form $n$ to $1$, and $c_j = \lceil \langle \textbf{b}, \textbf{b}_j \rangle /  \langle \textbf{b}_j, \textbf{b}_j \rangle \rfloor$.
+
+% To optimize the time/success trade-off, Lindner and Peikert \cite{Lindner:2011:BKS:1964621.1964651} propose a generalized algorithm \texttt{NewNearestPlanes} that works just as the Nearest Plane algorithm
+% but outputs multiple possibilities for the closest vector. The input of this algorithm
+% is equal to the input of the Nearest Plane algorithm including a vector
+% $d = (d_1, \dots , d_n) \in \mathbb{N}^n$. The output of the algorithm is a set of 
+% $\prod_{i \in [i, n]} d_k$ distinct lattice vectors of $\mathcal{L}(\textbf{B})$, where $\mathcal{L}(\textbf{B})$ is of dimension $n$. The \texttt{NewNearestPlanes}
+% algorithm proceeds as follows:
+
+% \begin{itemize}
+% 	\item If $n = 0$, return $0$. Else, let $v$ be the projection of $t$ onto the span of $\textbf{B}$, the space spanned by the reduced basis vectors.
+% 	\item Let $c_1, \dots , c_{d_n} \in \mathbb{Z}$ be the $d_n$ distinct integers closest to $\langle v, \textbf{b}_n \rangle /  \langle \textbf{b}_n, \textbf{b}_n \rangle$.
+% 	\item Return the set
+% 	      \[
+% 	      	\bigcup_{i \in [1, d_k]} (c_i \textbf{b}_n + \texttt{NewNearestPlanes} (\{ \textbf{b}_1, \dots, \textbf{b}_{n-1}, (d_1, \dots, d_{n-1}), \textbf{v} - c_i \textbf{b}_n \}))
+% 	      \]
+% \end{itemize}
+
+% The \texttt{NewNearestPlanes} query runs through these three steps for $n = n - 1$, thus decreasing $n$ with one in each iteration.
+
+

@@ -1,0 +1,234 @@
+\documentclass[12pt,titlepage]{report}
+% \documentclass[titlepage]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{indentfirst}
+\usepackage{float}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{mathtools}
+\usepackage[letterpaper, portrait, margin=1in]{geometry}
+\usepackage{courier}
+\usepackage{ mathrsfs }
+\usepackage{soul}
+\usepackage[pdfencoding=auto]{hyperref}
+\usepackage{bookmark}% faster updated bookmarks
+\usepackage{listings}
+\usepackage{lipsum}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{ragged2e}
+
+
+
+\usepackage[ruled]{algorithm}
+\usepackage[noend]{algpseudocode}
+% \algrenewcommand{\algorithmiccomment}[1]{\hskip3em$\rightarrow$ #1}
+\algrenewcommand\textproc{}% Used to be \textsc
+
+\usepackage{tgcursor}
+\usepackage{rotating}
+\usepackage{DejaVuSansMono}
+\usepackage{ragged2e}
+\usepackage{adjustbox}
+\usepackage{setspace}
+\usepackage{bm}
+\usepackage{rotating}
+\usepackage{sectsty}% http://ctan.org/pkg/sectsty
+\usepackage{titlecaps}% http://ctan.org/pkg/titlecaps
+\usepackage[titletoc]{appendix}
+\usepackage{etoolbox}
+\usepackage{alltt}
+\usepackage{verbatimbox}
+\usepackage{varwidth}% http://ctan.org/pkg/varwidth
+\usepackage{textcomp}
+\usepackage{tocloft}
+
+\providetoggle{long}
+\settoggle{long}{true}
+
+\providetoggle{verylong}
+\settoggle{verylong}{true}
+
+%\chapterfont{\titlecap}
+
+\newcommand*\justifyx{%
+  \fontdimen2\font=0.4em% interword space
+  \fontdimen3\font=0.2em% interword stretch
+  \fontdimen4\font=0.1em% interword shrink
+  \fontdimen7\font=0.1em% extra space
+  \hyphenchar\font=`\-% allowing hyphenation
+}
+
+\newcommand{\quotes}[1]{``#1''}
+
+\hypersetup{
+    colorlinks = true,
+    linkcolor = {black},
+    citecolor = {red},
+    urlcolor  = {blue},
+    pdfborder={0 0 0.1}
+}
+    
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{dblackcolor}{rgb}{0.0,0.0,0.0}
+\definecolor{dbluecolor}{rgb}{0.01,0.02,0.7}
+\definecolor{dgreencolor}{rgb}{0.2,0.4,0.0}
+\definecolor{dgraycolor}{rgb}{0.30,0.3,0.30}
+
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords: }} #1}
+
+\setcounter{secnumdepth}{5}
+
+\graphicspath{ {figures/} }
+
+\renewcommand{\baselinestretch}{1.2}
+
+\algdef{SE}[VARIABLES]{Variables}{EndVariables}
+   {\algorithmicvariables}
+   {\algorithmicend\ \algorithmicvariables}
+\algnewcommand{\algorithmicvariables}{\textbf{variables}}
+
+\lstdefinestyle{code}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{dbluecolor},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{dgraycolor},
+    basicstyle=\fontsize{7}{7}\ttfamily,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\newcommand{\figuresubtitle}{\small}
+
+\lstset{style=code}
+
+\setcounter{tocdepth}{1}
+
+\newtheorem{definition}{Definition}
+\newtheorem{plain}{Remark}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\renewcommand{\cfttoctitlefont}{\hspace*{\fill}\Huge\bfseries}
+\renewcommand{\cftaftertoctitle}{\hspace*{\fill}}
+\renewcommand{\cftlottitlefont}{\hspace*{\fill}\Huge\bfseries}
+\renewcommand{\cftafterlottitle}{\hspace*{\fill}}
+\renewcommand{\cftloftitlefont}{\hspace*{\fill}\Huge\bfseries}
+\renewcommand{\cftafterloftitle}{\hspace*{\fill}}
+
+
+
+\title{Master Thesis}
+\author{Seyedamirhossein Hesamian}
+\date{November 2016}
+
+\begin{document}
+
+\renewcommand{\contentsname}{TABLE OF CONTENTS}
+\renewcommand{\listfigurename}{LIST OF FIGURES}
+\renewcommand{\listtablename}{LIST OF TABLES}
+
+
+
+\pagenumbering{roman} 
+\input{chapters/context/title.tex}
+% \input{chapters/context/contact.tex}
+\setcounter{page}{2}
+\input{chapters/context/abstract.tex}
+\input{chapters/context/copyright.tex}
+
+\tableofcontents
+\listoffigures
+\newpage
+
+\input{chapters/context/notations.tex}
+\input{chapters/context/abbreviations.tex}
+\input{chapters/context/acknowledgement.tex}
+
+
+\doublespacing
+
+\setcounter{page}{0}
+\pagenumbering{arabic} 
+
+\chapter{Introduction}
+    \input{chapters/chapter1/introduction.tex}
+
+\chapter{Preliminaries}
+    \input{chapters/chapter2/foundation.tex}
+    \input{chapters/chapter2/polynomial.tex}
+    
+\chapter{Lattice cryptography}
+    \input{chapters/chapter3/lattice.tex}
+    \input{chapters/chapter3/attacks.tex}
+
+\chapter{Key-exchange basics and reconciliations}
+    \input{chapters/chapter4/key-exchange.tex}
+    \input{chapters/chapter4/key-exchange-algorithms.tex}
+    \input{chapters/chapter4/parameters.tex}
+    \input{chapters/chapter4/authenticated.tex}
+    
+\chapter{Implementation specifications}
+    \input{chapters/chapter5/error.tex}
+    \input{chapters/chapter5/implementation_specification.tex}
+
+\chapter{Summary, conclusion and future work}
+    \input{chapters/chapter6/conclusion.tex}
+
+\appendix
+\renewcommand\chaptername{Appendix}
+
+
+
+
+\begin{appendices}
+    \input{chapters/z_appendix/merkle_hellman.tex}
+\end{appendices}
+
+\begin{appendices}
+    \input{chapters/z_appendix/implementations.tex}
+\end{appendices}
+
+\singlespacing
+\onehalfspacing
+
+% \addcontentsline{toc}{section}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{references}{}
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

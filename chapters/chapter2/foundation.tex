@@ -1,0 +1,151 @@
+In this chapter we overview the need for key-exchange, basics of existing key-exchange protocols, how quantum computers will affect existing protocols and the need to replace them before introduction of quantum computers. Lastly, we overview basics of quotient polynomial ring as it is a prerequisite to understand ideal lattices that will be discussed in the next chapter. 
+
+\section{Key-exchange problem overview}
+For symmetric key cryptography to work for online communications, the secret key must be securely shared with authorized communicating parties and protected from discovery as well as use by unauthorized parties. Key-exchange protocol does nothing about authentication and without authentication, impersonation is feasible, and that includes simultaneous double impersonation, better known as Man-in-the-Middle attack. In Transport Layer Security (TLS) protocol, public key cryptography is used in Cryptographic Signatures to provide authenticity, in conjunction with key-exchange mechanism to provide forward secrecy by signing ephemeral key using server's private key. In details, in \texttt{DHE\_RSA} cipher suite, server dynamically generates a Diffie-Hellman public key and sends it to the client; the server also signs what it sends. Then client responds with his/her Diffie-Hellman public key encrypted using server's public key and then connection from this point on is encrypted using the Diffie-Hellman calculated shared key.
+
+\subsection{Importance of key-exchange}
+Key-exchange is any method in cryptography by which cryptographic keys are exchanged between two parties, allowing use of a cryptographic algorithm. To clarify, key-exchange is a way of generating a shared secret between two people in such a way that the secret cannot be seen by observing the communication. That is an important distinction: two parties are not sharing information during the key-exchange, they create a shared key together. This is particularly useful because we can use this technique to create a symmetric encryption key with someone, and then start encrypting traffic with that key which is also known as \textit{session key}. And even if the traffic is recorded and later analyzed, there is absolutely no way to figure out what the key was, even though the exchanges that created it may have been visible. This is where perfect forward secrecy comes from. Nobody analyzing the traffic at a later date can break in because the key was never saved, never transmitted, and never made visible anywhere.
+
+
+\begin{definition}
+\normalfont
+Session key is a single-use symmetric key used for encrypting all messages in one communication session.
+\end{definition}
+
+Like all cryptographic keys, session keys must be chosen so that they cannot be predicted by an attacker, usually requiring them to be chosen randomly. Failure to choose session keys (or any key) properly is a major (and too common in actual practice) design flaw in any cryptosystem.
+
+\begin{definition}
+\normalfont
+Forward secrecy (or perfect forward secrecy, PFS) is a property in which compromise of long-term keys does not compromise past session keys. Forward secrecy protects past sessions against future compromises of secret keys or passwords. If forward secrecy is used, encrypted communications and sessions recorded in the past cannot be retrieved and decrypted.
+\end{definition}
+
+
+To achieve forward secrecy, if one uses long term secret keys for authentication only and uses short term ephemeral keys for encryption then compromise of long term key does not compromise confidentiality of past massages. To clarify, when server's private key gets leaked then if we simply encrypted the session key using the server's public key, all past communication with that server can be decrypted. This is an unintended consequence. But if an ephemeral Diffie-Hellman key-exchange was used, a private key leak would not compromise past communications, since the keys used for the key exchange are long gone, and the leaked long term key was only used for authentication and not for confidentiality. 
+
+It is always an option to use public-key cryptography (e.g. RSA) as a key-exchange protocol (i.e. client encrypts a random key using server's public-key and then server decrypts it using it's private-key). However, public-key algorithms are generally far more complex than key-exchange protocols. There are two primary reasons to use session keys. First, several cryptanalytic attacks become easier as more material encrypted with a specific key is available. By limiting the amount of data processed using a particular key, those attacks are made more difficult. Second, asymmetric encryption is too slow for key-exchange purposes, and all symmetric encryption algorithms require that the key is securely distributed. For example, advantage of using Diffie-Hellman over RSA for generating ephemeral keys is producing a new Diffie-Hellman key pair can be extremely fast; in case of Diffie-Hellman based on elliptic curve, provided finite cyclic group into which shared key is computed is reused or reusing shared polynomial in Ring-$\mathrm{LWE}$ variant, both do not entail extra risks.
+
+
+
+
+
+
+
+
+\section{Diffie-Hellman problem and protocol}
+The Diffie–Hellman problem (DHP) is a mathematical problem first proposed by W. Diffie and M. Hellman in the context of cryptography. The motivation for this problem is that many security systems use mathematical operations that are fast to compute, but hard to reverse. The following is the definition of discrete logarithm problem which is closely related to Diffie-Hellman problem.
+
+
+\begin{definition}
+\normalfont
+Consider a cyclic group $G$ with generator $g$, given an element $h \in G$, discrete logarithm problem is to find the smallest positive integer $x$ such that $h = g^x$
+\end{definition}
+
+% \begin{definition}
+% \normalfont
+% Let $g$ be a primitive root in $\mathbb{Z}_p^*$ or generator of the cyclic group $\mathbb{Z}_p^*$, then for any element $y \in \mathbb{Z}_p^*$ there is a unique $x$, $1\le x < p - 1 = \phi(p)$ such that $g^x \equiv y \bmod p$. Then $x$ is a discrete logarithm modulo $p$ with respect to the base $g$.
+% \end{definition}
+
+
+
+Formally, $g$ is a generator of a cyclic group (typically the multiplicative group of a finite field or an elliptic curve group) and $x$ and $y$ are randomly chosen integers. Note that when $g$ is a generator of the multiplicative group of integers modulo $p$, then $g$ is called primitive root. Primitive root is an integer whose powers modulo $p$ generates uniformly all integer in range $[1, \phi(p) = p - 1]$ inclusive.
+
+The following is an example of discrete logarithm problem if group is a multiplicative group of a finite field. Given $\mathbb{Z}_5^*$ and generator $2$, then the discrete logarithm of $1$ is $4$ because $2^4 \equiv 1 \bmod 5$. In general, Fermat's theorem tells us that if $g^x \equiv h \bmod p$, then $x + (p - 1)k$ is also a solution for any integer $k$. Therefore, the discrete logarithm can be regarded as a number modulo $p - 1$.
+
+
+% The Diffie–Hellman problem is stated informally as follows: given an element $g$ and the values of $g^x$, $g^y$, what is the value of $g^{xy}$?
+
+
+
+
+
+The following is the formal definition of Decisional Diffie–Hellman.
+
+
+
+\begin{definition}
+\normalfont
+Consider a (multiplicative) cyclic group $G$ of order $q$, and with generator $g$. Given $g^{a}$ and $g^{b}$ for uniformly and independently chosen $a,b\in \mathbb {Z} _{q}$, Decisional Diffie–Hellman (DDH) is to distinguish between $g^{ab}$ and a random element in $G$.
+\end{definition}
+
+
+This intuitive notion is that the following two probability distributions are computationally indistinguishable:
+\begin{itemize}
+    \item $(g^{a},g^{b},g^{ab})$, where $a$ and $b$ are randomly and independently chosen from $\mathbb {Z} _{q}$
+    \item $(g^{a},g^{b},g^{c})$, where $a,b,c$ are randomly and independently chosen from $\mathbb {Z} _{q}$
+\end{itemize}
+Triples of the first kind are often called DDH triples or DDH tuples.
+
+The following is the formal definition of Computational Diffie–Hellman.
+
+\begin{definition}
+\normalfont
+Consider a cyclic group $G$ of order $q$. The Computational Diffie–Hellman (CDH) assumption states that, given $(g,g^{a},g^{b})$, for a randomly chosen generator $g$ and random $a,b\in \{0,\ldots ,q-1\}$, it is computationally intractable to compute the value $g^{{ab}}$.
+\end{definition}
+
+The CDH assumption is related to the discrete logarithm assumption, which holds that computing the discrete logarithm of a value given generator $g$ as a base of logarithm is hard. If taking discrete logarithms in $G$ were easy, then the CDH assumption would be false: given $(g,g^{a},g^{b})$, one could efficiently compute $g^{ab}$ in the following way:
+
+\begin{itemize}
+    \item Compute $a$ by taking the discrete logarithm of $g^{a}$ to base $g$
+    \item Compute $g^{ab}$ by exponentiation: $g^{{ab}}=(g^{b})^{a}$
+\end{itemize}
+
+
+% It is an open problem to determine whether the discrete logarithm assumption is equivalent to CDH, though in certain special cases this can be shown to be the case.
+
+The DDH and CDH assumptions are related to each other. If computing $g^{ab}$ from ($g$, $g^a$, $g^b$) were easy, it would also be easy to detect DDH tuples. It is believed that DDH is a stronger assumption than CDH, because there are groups for which detecting DDH tuples is easy \cite{cryptoeprint:2004:070}, but solving the CDH problem is believed to be hard. The most efficient means known to solve the DHP is to solve the discrete logarithm problem (DLP) and DHP is considered difficult for groups whose order is large enough.
+
+
+\subsection{Diffie-Hellman protocol}
+
+The Diffie-Hellman protocol is a method for two parties to generate a shared private key with which they can then exchange information across an insecure channel. The following is a description of the protocol when we use the multiplicative group of integers modulo $p$, but it can be generalized to finite cyclic groups (e.g. elliptic curve group). Let the users be named Alice and Bob. First, they agree on two numbers $g$ and prime $p$, where $p$ is large (typically at least $1024$ bits) and $g$ is a primitive root modulo $p$ (in practice, it is a good idea to choose  $p$ such that $\frac{p-1}{2}$ is also prime). The numbers $g$ and $p$ need not be kept secret from others. Then Alice chooses a large random number $a$ as her private key and Bob similarly chooses a large number $b$. Note that only $a$, $b$ are kept secret. All the other values $p$, $g$, $g^{a} \bmod p$, and $g^{b} \bmod p$ are sent in the clear-text. Alice then computes $A = g^a \bmod p$, which she sends to Bob, and Bob computes $B = g^b \bmod p$, which he sends to Alice.
+
+Then both Alice and Bob compute their shared key, which Alice computes as $K=B^a \bmod p = (g^b)^a \bmod p$ and Bob computes as $K=A^b \bmod p= (g^a)^b \bmod p$. More specifically,
+
+\begin{equation}
+    (g^{a} \bmod p)^{b} \bmod p = (g^{b} \bmod p)^{a} \bmod p
+\end{equation}
+
+Alice and Bob can now use their shared key $K$ to exchange information without worrying about other users obtaining this information.
+
+In practice, we choose prime $p$ such that $p=2  k+1$ where $k$ is also a prime, this known as safe prime or Sophie-Germain prime. It is relatively fast to find such $p$. Then any number in $\mathbb{Z}^{*}_{p} = \{ x \in \mathbb{Z}_p | \gcd(x, p) = 1 \}$ will have an order $m$ such that $m \mid \phi(p)$ hence is one of $1, 2,k,2k$. We pick a random number $x$ and check if $x,x^2,x^k \ \not \equiv 1 \bmod p$. If so, then $x$ is a primitive root of $p$, otherwise, we start over. If we pick random numbers, we will soon find one. The number of primitive roots is $\phi(\phi(p))$, so the probability of hitting a primitive root is about $\frac{1}{2}$ in each try. Since number of primitive roots modulo $p$ equals to $ \phi(\phi(p)) =\phi(p-1) = \phi(2k) = \phi(2) \phi(k) = k-1$, and potential primitive root $x$ is in range $[2, p-2]$; hence, success probability would be $\frac{k-1}{p-3} = \frac{k-1}{2k-2} = \frac{1}{2}$.
+
+
+In order for a potential eavesdropper (Eve) to attack, she would first need to obtain $K=g^{(ab)} \bmod p$ knowing only $g$, $p$, $A=g^a \bmod p$ and  $B=g^b \bmod p$. This can be done by computing $a$ from $A=g^a \bmod p$ and $b$ from $B=g^b \bmod p$. This is a discrete logarithm problem which is computationally infeasible for large $p$. Computing the discrete logarithm of a number modulo $p$ takes roughly the same amount of time as factoring the product of two primes the same size as $p$, which is what the security of the RSA cryptosystem relies on.
+
+
+
+\begin{figure}[H]
+	\centering
+	\begin{tabular}{|lll|}
+		\hline
+		\textbf{Alice}                     &                     & \textbf{Bob}                       \\\hline
+		$a \xleftarrow{\$} \mathbb{Z}_{p}$ &                     & $b \xleftarrow{\$} \mathbb{Z}_{p}$ \\
+		                                   & $\xrightarrow{g^a \bmod p}$ &                                    \\
+		                                   & $\xleftarrow{g^b \bmod p}$  &                                    \\
+		 		
+		$K_{AB} = (g^b)^a \equiv g^{ab} \bmod p$        &                     & $K_{AB} = (g^a)^b \equiv g^{ab} \bmod p$        \\\hline
+	\end{tabular}
+	\caption{Diagram of Diffie-Hellman key-exchange protocol}
+	\figuresubtitle{Note that $g$ is a primitive root $\bmod p$ and $\xleftarrow{\$}$ means chosen uniformly random}
+\end{figure}
+
+
+
+
+
+\subsection{Discrete logarithm in polynomial time using quantum computing}
+Shor's algorithm \cite{Shor:1997:PAP:264393.264406}, named after mathematician Peter Shor, is a quantum algorithm (an algorithm that runs on a quantum computer) for integer factorization formulated in 1994. Informally it solves the following problem: given an integer $N$, find its prime factors. On a quantum computer, to factor an integer $N$, Shor's algorithm runs in polynomial time $\approx \text{O}(n^2)$ where $n$ is number of bits of input. This is substantially faster than the most efficient known classical factoring algorithm, the general number field sieve, that factors large integers (e.g. more than 140 digits) which works in sub-exponential time $e^{(1.923 + \text{O}(1)) (\ln{n})^{\frac{1}{3}} (\ln{\ln{n}})^{\frac{2}{3}}}$. If a quantum computer with a sufficient number of qubits (quantum bits) could operate, Shor's algorithm could be used to break public-key cryptography schemes such as RSA scheme. Security of RSA is based on the assumption that factoring large numbers is computationally intractable. To break RSA, it is essentially factoring the modulus $N$ to primes $p,q$.
+
+To break Diffie-Hellman, we have to get $g^{x  y}$ from $g^x$, $g^y$ and $g$. The best known way to do this would be to get $x$ from $g^x$ or $y$ from $g^y$, the discrete logarithm problem. Shor's algorithm was initially designed to factor integers but later it was shown that it can be modified to solve discrete logarithm problem in polynomial time \cite{Boneh1995}. In details, both factorization and discrete logarithm are special cases of the hidden subgroup problem over an abelian group (elliptic curve cryptography also falls in the same category). We \textit{do} have an efficient quantum algorithms with polynomial time complexity for solving the hidden subgroup problem over any abelian group (e.g. Shor's algorithm). As for examples of non-abelian hidden subgroup problems such as graph isomorphism and certain lattice problems (e.g. $\mathrm{SVP}$), we do not know how to solve these efficiently on a quantum computer. 
+
+
+To summarize, there is no known classical algorithm that can solve discrete logarithm problem in polynomial time. However, Shor's algorithm shows that solving discrete logarithm problem is efficient on an ideal quantum computer, so it is \textit{feasible} to defeat RSA and Diffie-Hellman protocols by constructing a large quantum computer.
+
+% The efficiency of Shor's algorithm is due to the efficiency of the quantum Fourier transform, and modular exponentiation by repeated squaring. 
+
+\subsection{Quantum safe replacement Diffie-Hellman like key-exchange}
+Lattice-based cryptography is the generic term for asymmetric cryptographic primitives based on lattices. While lattice-based cryptography has been studied for several decades, there has been renewed interest in lattice-based cryptography as prospects for a real quantum computer improve. Unlike more widely used and known public key cryptography such as the RSA or Diffie-Hellman cryptosystems which are attacked by a quantum computer, some lattice-based cryptosystems appear to be resistant to attack by both classical and quantum computers. Further the Learning With Errors ($\mathrm{LWE}$) variants of lattice-based cryptography comes with security proofs which demonstrate that breaking the cryptography is equivalent to solving known hard problems in lattices. Later, Ring-$\mathrm{LWE}$ variant of $\mathrm{LWE}$ was created to address inefficiency of $\mathrm{LWE}$ based cryptosystems.
+
+The Ring-$\mathrm{LWE}$ key-exchange is designed to be a \textit{quantum safe} replacement for the widely used Diffie-Hellman key-exchanges as well as it's elliptic curve variant that are used to secure the establishment of secret keys over untrusted communications channels. Like Diffie-Hellman and it's elliptic curve variant, the Ring-$\mathrm{LWE}$ key-exchange provides a cryptographic property called forward secrecy; the aim of which is to ensure that there are no long term secret keys that can be compromised would enable bulk decryption.
+
+Ring-$\mathrm{LWE}$ key-exchange is similar in nature to Diffie-Hellman (i.e. having a public and private components to derive a shared key) therefore existing authenticated, multiparty or authenticated-multiparty key-exchange protocols can also be used as an abstract layer. The underlying mathematics behind Diffie-Hellman and Ring-$\mathrm{LWE}$ have no connection with each other, only intention is to create an alternative Diffie-Hellman like key-exchange protocol.

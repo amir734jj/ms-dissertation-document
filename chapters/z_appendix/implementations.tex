@@ -1,0 +1,57 @@
+\chapter{Basic implementations of all Ring-\texorpdfstring{$\mathrm{LWE}$}{LWE} key-exchange reconciliations}
+
+One of the goals of this thesis was to implement a simple to understand, easy to modify and straightforward implementation of all four reconciliation mechanisms (i.e. Regev, Ding, Peikert and NewHope). However, after struggling with a well known number theory libraries such as $\mathrm{NTL}$ and $\mathrm{FLINT}$ which are indeed great packages written in $\mathrm{C}$ but mainly for ones who have studied and used number theory for a long time and speed is their primary concern, we selected Python language. Python has a syntax similar to pseudo-code but setting up an environment in Python to use all the libraries needed for the reconciliation implementation \textit{and} achieve three criteria above would not be possible (i.e. setting up polynomial library, then configure quotient ring and etc.). Also, Python's popular mathematical libraries such as $\mathrm{numpy}$ do not offer a quotient Polynomial ring modulo finite field without using a work around like calling $\mathrm{NTL}$ library which is written in $\mathrm{C}$. After searching further we came upon SageMath which uses a Python-like syntax, supporting procedural, functional and object-oriented constructs.
+
+W. Stein, creator of SageMath who is a mathematician at the University of Washington, realized when designing Sage that there were many open-source mathematics software packages already written in different languages, namely $\mathrm{C}$, $\mathrm{C}$++, Common Lisp, Fortran and Python. Rather than reinventing the wheel, Sage which is written mostly in Python integrates many specialized mathematics software packages into a common interface, for which a user needs to know only Python. However, Sage contains hundreds of thousands of unique lines of code adding new functions and creating the interface between its components.
+
+SageMath is an open-source project and it truly a powerful tool but it does not receive enough attention as it deserves specially for it's powerful polynomial package. We moved away from $\mathrm{java}$ after trying to implement a univariate polynomial ring using $\mathrm{java}$ (i.e. reinventing the wheel) and seeing how difficult it is to implement a proper polynomial parser to works with edge cases, although it was a rewarding experience, it was time consuming. We should also give Sage credit for providing comprehensive Matrix library which includes $\mathrm{LLL}$ (by calling $\mathrm{NTL}$'s $\mathrm{LLL}$ implementation) and many other implementations of lattice algorithms (e.g. $\mathrm{BKZ}$, $\mathrm{SVP}$, $\mathrm{CVP}$ and more).
+
+Sage uses many open source libraries and links them all together using Python. It is a simple idea but it requires clever implementation which Sage truly delivers. It is fascinating to see a smart type system that can handle the linkage between all those open-source libraries.
+
+\iftoggle{long}{The following are demonstration of Peikert and Alkim et al. reconciliation algorithms using SageMath. Note that these are not efficient implementations and they only serve as a platform to modify and experiment with the reconciliation algorithms. }
+
+In all implementations\iftoggle{long}{ below}, we used Sage's built in function: \texttt{\justifyx DiscreteGaussianDistributionPolynomialSampler} which realizes oracles which returns polynomials in $\mathbb{Z}[x]$ where each coefficient is sampled independently with a probability proportional to $e^{(-(x-c)^2/(2 \sigma ^2))}$. Thereafter, we modified the ring of returned polynomial to quotient polynomial ring over finite field of integers\iftoggle{long}{ using \texttt{Y(f)}}.
+
+For the complete code and all four reconciliation methods please refer to:
+
+\begin{center}
+\href{https://github.com/amir734jj/LWE-KEX}{\texttt{https://github.com/amir734jj/LWE-KEX}}
+\end{center}
+
+
+\iftoggle{long}{
+The following are implementations of reconciliation algorithms not protocols. For example, with regards to the $\mathrm{NewHope}$ implementation, we used the Gaussian distribution sampler as oppose to Binomial distribution that $\mathrm{NewHope}$ protocol uses. 
+
+\lstinputlisting[language=Python, caption=Configuration of quotient polynomial ring over finite field using SageMath]{code_snippets/LWE-KEX/quotient_ring.sage}
+
+
+Below is a tester to check if reconciliation algorithm works correctly. This can be used in conjunction with any reconciliation algorithm. 
+
+\lstinputlisting[language=Python, caption=Tester for reconciliations using SageMath]{code_snippets/LWE-KEX/test.sage}
+
+
+Below is the implementation of Peikert's reconciliation algorithm. Notice the randomized doubling function that multiplies every coefficient of polynomial by two and then adds a secondary noise. $\mathrm{BCNS}$ protocol samples two bits and use it as an index to uniformly sample from: $\{-1, 0, 0, 1\}$.
+
+
+\lstinputlisting[language=Python, caption=Peikert reconciliation implementation using SageMath]{code_snippets/LWE-KEX/peikert_rec.sage}
+
+
+Below is the implementation of $\mathrm{NewHope}$ reconciliation algorithm. We did not implement the concept of splitting Voronoi cell into sub-cells as it is part of $\mathrm{NewHope}$ protocol not the reconciliation. Notice the structure is basically the same as Peikert's reconciliation (i.e. $\texttt{dbl}$, $\texttt{generate\_signal}$, $\texttt{reconcile}$). The $\texttt{initialize}$ function will return an integer lattice created using identity matrix of dimension = $\texttt{sub\_dimension}$. It also returns a polyhedron (or voronoi cell) centered at $(1/2, \dots, 1/2)$ inside a lattice with the following basis (when $\texttt{sub\_dimension = 4}$): $\begin{psmallmatrix}
+    1   &   0   &   0   &   0\\
+    0   &   1   &   0   &   0\\
+    0   &   0   &   1   &   0\\
+    0.5   &   0.5   &   0.5   &   0.5
+\end{psmallmatrix}$
+
+\lstinputlisting[language=Python, caption=NewHope reconciliation implementation using SageMath]{code_snippets/LWE-KEX/newhope_rec.sage}
+
+}
+
+
+% \lstinputlisting[language=Python, caption=Regev KEX implementation using SageMath]{code_snippets/LWE-KEX/Regev.sage}
+
+% \lstinputlisting[language=Python, caption=DXL implemented using SageMath]{code_snippets/LWE-KEX/Ding.sage}
+
+% \lstinputlisting[language=Python, caption=Peikert's KEM (BCNS) implemented using SageMath]{code_snippets/LWE-KEX/Peikert.sage}
+
+% \lstinputlisting[language=Python, caption=NewHope implemented using SageMath]{code_snippets/LWE-KEX/NewHope.sage}

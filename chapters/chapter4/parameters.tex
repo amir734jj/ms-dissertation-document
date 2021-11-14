@@ -1,0 +1,35 @@
+\section{Parameter choices for Ring-\texorpdfstring{$\mathrm{LWE}$}{LWE} key-exchange}
+The Ring-$\mathrm{LWE}$ key-exchange presented above worked in the Ring of polynomials of degree $n-1$ or less $\bmod$ a polynomial $\Phi(x)$. Note that $n$ is a power of $2$ and $q$ is a prime which is congruent to $1 \bmod 2n$. Following the guidance given in Peikert's paper \cite{peikert2014lattice}, V. Singh in \cite{vikramsingh2015} suggested two sets of parameters for the RLWE-KEX and in both coefficient of error polynomial is sampled from normal distribution with standard deviation $\sigma = \frac{8}{\sqrt{2\pi}}$. Suggested parameters are as follows:
+
+\begin{enumerate}
+    \item For $128$ bits of security, $n = 512$, $q = 25601$, and $\Phi(x) = x^{512} + 1$
+    \item For $256$ bits of security, $n = 1024$, $q = 40961$, and $\Phi(x) = x^{1024} + 1$
+\end{enumerate}
+
+Because RLWE based key exchange uses random sampling and fixed bounds, there is a small probability that the key-exchange will fail to produce the same key for the initiator and responder. Given Gaussian parameter $\sigma$ equals to $\frac{8}{\sqrt{2 \pi}} = 3.192$, Singh in \cite{vikramsingh2015} calculated that probability of key agreement failure to be less than $2^{-71}$ for the $128$-bit secure parameters and less than $2^{-91}$ for the $256$-bit secure parameters. $\mathrm{BCNS}$ protocol kept the $\sigma$ and $\Phi$ as suggested by Singh for $256$ bits of security, but changed the prime modulus of finite field to $2^{32}-1$. This resulted in failure probability of $2^{-131072}$. 
+
+Originally (in early versions of protocol), $\mathrm{NewHope}$ kept the $\Phi$ as suggested by Singh, but used $12$-bit binomial distribution instead with $\sigma = \sqrt{\frac{12}{2}} = 2.449$ and changed the prime modulus of finite field to $12289$. This represents a $70\%$ reduction in public key size over the parameters of Singh. Hence, reducing the prime modulus size resulted in failure probability of $2^{-105}$. But in later version (and after discussion with A. Langley from Google), Alkim et al. used $16$-bit binomial distribution with $\sigma = \sqrt{\frac{16}{2}} = 2.828$ which resulted in failure probability of $2^{-60}$. In fact, this later parameter was implemented in Google's Chrome Canary project as well as Boring-SSL which is a fork of Open-SSL that is designed to meet Google's needs \cite{braithwaite_2016}.
+
+\begin{plain}
+\normalfont
+Notice the smaller $q$ results in faster key-exchange by reducing over-head size and increase in security, and most importantly increasing impact of error terms, but this yields higher failure probability.
+\end{plain}
+
+
+
+\begin{table}[H]
+	\centering
+	\begin{adjustbox}{width=1\textwidth}
+		\small
+		\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+			\hline
+			$n$  & $q$        & Distribution & Parameter            & Security Claim & Rec. Algorithm     & Citation                      \\ \hline
+			512  & 1051649    & Gaussian     & $3.19 / \sqrt{2\pi}$ & $2^{128}$      & $\mathrm{DXL}$     & \cite{cryptoeprint:2015:008}  \\ \hline
+			820  & 49261      & Gaussian     & $8 / \sqrt{2\pi}$    & $2^{256}$      & $\mathrm{Peikert}$ & \cite{cryptoeprint:2015:1120} \\ \hline
+			1024 & 12289      & Binomial     & $\sqrt{{16} / {2}}$  & $\> 2^{128}$   & $\mathrm{NewHope}$ & \cite{alkim2015post}          \\ \hline
+			1024 & 40961      & Gaussian     & $8 / \sqrt{2\pi}$    & $\> 2^{256}$   & $\mathrm{Peikert}$ & \cite{cryptoeprint:2015:1120} \\ \hline
+			1024 & $2^{32}-1$ & Gaussian     & $8 / \sqrt{2\pi}$    & $\> 2^{128}$   & $\mathrm{Peikert}$ & \cite{bos2015post}            \\ \hline
+		\end{tabular}
+	\end{adjustbox}
+	\caption{Listing of a number of different parameter choices for KEXs using the Ring Learning with Errors problem}
+\end{table} 

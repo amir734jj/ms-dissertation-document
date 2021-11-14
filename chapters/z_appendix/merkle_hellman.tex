@@ -1,0 +1,166 @@
+\chapter{Merkle–Hellman knapsack cryptosystem}
+The Merkle–Hellman knapsack cryptosystem was one of the earliest public key cryptosystems invented by Ralph Merkle and Martin Hellman in 1978 and it has been broken.
+
+Merkle-Hellman is an asymmetric-key cryptosystem, meaning that two keys are required for communication: a public key and a private key. Furthermore, unlike RSA, it is one-way: the public key is used only for encryption, and the private key is used only for decryption. The Merkle-Hellman system is based on the subset sum problem (a special case of the knapsack problem). The problem is as follows: given a set of numbers $\textbf{A}$ and a number $b$, find a subset of $\textbf{A}$ which sums to $b$. In general, this problem is known to be NP-complete. However, if the set of numbers (called the knapsack) is super-increasing, meaning that each element of the set is greater than the sum of all the numbers in the set lesser than it, the problem is \quotes{easy} and solvable in polynomial time with a simple greedy algorithm.
+
+
+
+\textbf{Key generation}: In Merkle-Hellman, the keys are two knapsacks. The public key is a \textit{hard} knapsack $\textbf{A}$, and the private key is an \textit{easy}, or superincreasing, knapsack $\textbf{B}$, combined with two additional numbers, a multiplier and a modulus. The multiplier and modulus can be used to convert the superincreasing knapsack into the hard knapsack. These same numbers are used to transform the sum of the subset of the hard knapsack into the sum of the subset of the easy knapsack, which is a problem that is solvable in polynomial time.
+
+To encrypt $n$-bit messages, choose a superincreasing sequence
+$w = (w_1, w_2, \dots, w_n)$ of $n$ nonzero natural numbers. Pick a random integer $q$, such that $q>\sum _{i=1}^{n}w_{i}$,
+and a random integer $r$, such that $\gcd(r,q) = 1$ (i.e. $r$ and $q$ are coprime). $q$ is chosen this way to ensure the uniqueness of the ciphertext. If it is any smaller, more than one plaintext may encrypt to the same ciphertext. Since $q$ is larger than the sum of every subset of $w$, no sums are congruent modulo $q$ and therefore none of the private keys sums will be equal. $r$ must be coprime to $q$ or else it will not have an inverse modulo $q$. The existence of the inverse of $r$ is necessary so that decryption is possible. Now calculate the sequence: $\beta = (\beta_1, \beta_2, \dots, \beta_n)$ where $\beta_i = rw_i \bmod q$. The public key is $\beta$, while the private key is: $(w, q, r)$.
+
+
+\textbf{Encryption}: To encrypt a message, a subset of the hard knapsack $\textbf{A}$ is chosen by comparing it with a set of bits (the plaintext) equal in length to the key. Each term in the public key that corresponds to a $1$ in the plaintext is an element of the subset $\textbf{A}_m$, while terms that corresponding to $0$ in the plaintext are ignored when constructing $\textbf{A}_m$ they are not elements of the key. The elements of this subset are added together and the resulting sum is the ciphertext.
+
+To encrypt an $n$-bit message $\alpha = (\alpha_1, \alpha_2, \dots, \alpha_n)$, where $\alpha_{i}$ is the $i$-th bit of the message and $\alpha_{i} \in \{0, 1\}$, calculate $c=\sum _{{i=1}}^{n}\alpha _{i}\beta _{i}$. The ciphertext then is $c$.
+
+
+\textbf{Decryption}: Decryption is possible because the multiplier and modulus used to transform the easy knapsack into the public key can also be used to transform the number representing the ciphertext into the sum of the corresponding elements of the superincreasing knapsack. Then, using a simple greedy algorithm, the easy knapsack can be solved using $\text{O}(n)$ arithmetic operations, which decrypts the message.
+
+In order to decrypt a ciphertext $c$ a receiver has to find the message bits $\alpha_{i}$ such that they satisfy $c=\sum _{{i=1}}^{n}\alpha_{i}\beta_{i}$. This would be a hard problem if the $\beta_i$ were random values because the receiver would have to solve an instance of the subset sum problem, which is known to be NP-hard. However, the values $\beta{i}$ were chosen such that decryption is easy if the private key $(w, q, r)$ is known.
+
+The key to decryption is to find an integer $s$ that is the modular inverse of $r$ modulo $q$. That means $s$ satisfies the equation $s \times r \bmod q = 1$ or equivalently there exist an integer $k$ such that $s \times r = kq + 1$. Since $r$ was chosen such that $\gcd(r,q)=1$ it is possible to find $s$ and $k$ by using the Extended Euclidean algorithm.
+
+Next the receiver of the ciphertext $c$ computes $c'\equiv cs{\pmod{q}}$. Hence $c'\equiv cs\equiv \sum _{{i=1}}^{n}\alpha _{i}\beta _{i}s{\pmod  {q}}$. Because of $r \times s \bmod q = 1$ and $\beta_{i} = r\times w_{i} \bmod q$ follows $\beta _{i}s\equiv w_{i}rs\equiv w_{i}{\pmod  {q}}$.
+
+Hence $c'\equiv \sum _{{i=1}}^{n}\alpha _{i}w_{i}{\pmod  {q}}$. The sum of all values $w_{i}$ is smaller than $q$ and hence $\sum _{{i=1}}^{n}\alpha_{i}w_{i}$ is also in the interval $[0,q-1]$. Thus the receiver has to solve the subset sum problem $c'=\sum _{{i=1}}^{n}\alpha _{i}w_{i}$.
+
+This problem is easy because $w$ is a superincreasing sequence. Take the largest element in w, say $w_{k}$. If $w \times k > c'$ , then $\alpha_{k} = 0$, if $w_{k} \le c'$ , then $\alpha_{k} = 1$. Then, subtract $w_{k} \times \alpha_{k}$ from $c'$, and repeat these steps until we have figured out $\alpha$.
+
+
+
+\section*{Example of Merkle–Hellman knapsack cryptosystem}
+First, a $w$ is created: $w = \{2, 7, 11, 21, 42, 89, 180, 354\}$. This is the basis for a private key. From this, calculate the sum. $\sum w=706$, then, choose a number $q$ that is greater than the sum, say, $q = 881$.
+
+Also, choose a number $r$ that is in the range $[1,q)$ and is coprime to $q$, say, $r = 588$. The private key consists of $q$, $w$ and $r$. To calculate a public key, generate the sequence $\beta$ by multiplying each element in $w$ by $r \bmod q$. Then, $\beta = \{295, 592, 301, 14, 28, 353, 120, 236\}$ because:
+
+\[
+\begin{split}
+(2 \times 588) \bmod 881 = 295\\
+(7 \times 588) \bmod 881 = 592\\
+(11 \times 588) \bmod 881 = 301\\
+(21 \times 588) \bmod 881 = 14\\
+(42 \times 588) \bmod 881 = 28\\
+(89 \times 588) \bmod 881 = 353\\
+(180 \times 588) \bmod 881 = 120\\
+(354 \times 588) \bmod 881 = 236
+\end{split}
+\]
+
+The sequence $\beta$ makes up the public key. Say Alice wishes to encrypt 'a'. First, she must translate 'a' to binary (in this case, using ASCII) $\text{01100001}$. She multiplies each respective bit by the corresponding number in $\beta$:
+
+\begin{gather*}
+a = 01100001 \\ \to   
+0 \times 295
++ 1 \times 592
++ 1 \times 301
++ 0 \times 14
++ 0 \times 28
++ 0 \times 353
++ 0 \times 120
++ 1 \times 236  
+= 1129
+\end{gather*}
+
+
+She sends this to the recipient. To decrypt, Bob multiplies $1129$ by $r^{-1} \bmod q$, $1129 \times 442 \bmod 881 = 372$. Now Bob decomposes $372$ by selecting the largest element in $w$ which is less than or equal to $372$. Then selecting the next largest element less than or equal to the difference, until the difference is $0$:
+
+
+\begin{gather*}
+372 - 354 = 18\\
+18 - 11 = 7\\
+7 - 7 = 0
+\end{gather*}
+
+
+The elements we selected from our private key correspond to the $1$ bits in the message: $\text{01100001}$. When translated back from binary, this `a' is the final decrypted message.
+
+
+\section*{Breaking Merkle–Hellman knapsack cryptosystem using \texorpdfstring{$\mathrm{LLL}$}{LLL}}
+This system was very popular for a while since it is very fast to implement. However, in the early 1980's, Shamir in \cite{Shamir:1982:PTA:1382436.1382749} was able to peel away this disguise and obtain superincreasing sequence (or one that was equivalent to it). Consider a knapsack problem to be solved:
+$t = x_1\times a_1 + x_2 \times a_2 + \dots + x_n \times a_n$ such that $t$ is a ciphertext and $\forall i: a_i \in \beta$. Then define a lattice $\mathcal{L}_a$ using the 
+
+\begin{align}
+    \centering
+    \mathcal{L}_a =
+    \begin{pmatrix}
+        1 &  0  & \ldots &0 & a_{1}\\
+        0 &  1  & \ldots &0 & a_{2}\\
+        \vdots  & \vdots & \ddots & \vdots\\
+        0 &  0  & \ldots &1  & a_{n}\\
+        0 &  0  & \ldots &0 & -t
+    \end{pmatrix}
+\end{align}
+
+If $x = (x_1, \dots, x_n) \in \{0, 1\}^{n}$ solves above, then $v = (x_1, \dots, x_n, 0) \in \mathcal{L}_a$. Note that $v$ is a short vector. If it is the shortest vector in $\mathcal{L}_a$, then $\mathrm{LLL}$ finds $v$. The larger $\texttt{MESSAGE\_LEN}$, the probability of success will be lowered because the reduced basis of lattice (although small) would not always yield shortest lattice vectors (i.e. solution of knapsack problem). The reason lies in the facts that for any vector $x$ of reduced lattice basis $\mathcal{L}_a$ that is reduced using $\mathrm{LLL}$, $||b_1|| \le 2^{\frac{n-1}{2}}  ||x||$ holds and as $n$ (i.e. $\texttt{MESSAGE\_LENGTH}$ or dimension) gets larger, then vectors would be far from \textit{shortest vector} of lattice. The $\mathrm{LLL}$ algorithm will not always produce the desired vector and therefore, the attack is not always successful. However, in practice, the lattice reduction attack is highly effective against the original Merkle-Hellman knapsack.
+
+\iftoggle{verylong}{
+\lstinputlisting[language=Python, caption=Merkle–Hellman knapsack cryptosystem implemented using SageMath]{code_snippets/Merkle-Hellman.sage}
+}
+
+\begin{algorithm}[H]
+    \caption{Breaking Merkle–Hellman knapsack cryptosystem using $\mathrm{LLL}$}
+    \begin{algorithmic}[1]
+        \State message\_length $\leftarrow$ 24 \Comment{larger this variable harder to break the cryptosystem}
+        \item[] \Comment{this function creates superincreasing sequence}
+        \Function{create\_superincreasing\_sequence}{}
+            \State sequence $\leftarrow$ create empty list of size equal to length
+            \State $s \leftarrow$ 10
+            \State val $\leftarrow s$
+            \State index $\leftarrow $ index $ + 1$
+            \For{index $\gets 0$ to message\_length $- 1$   }
+                \State sequence[index] $\leftarrow$ val
+                \State val $\leftarrow$ s $+$ random integer $\in [1, 10]$
+                \State s $\leftarrow$ s $+$ val
+            \EndFor
+            \State \Return sequence
+        \EndFunction
+        \item[]
+        \Function{create\_public\_key}{$w, r, q$}
+            \State beta $\leftarrow$ create empty list of size equal to message\_length
+            \For{index $\gets 0$ to message\_length - 1}
+                \State beta[index] $\leftarrow  (r \times w[\text{index}] )  \bmod q$
+            \EndFor
+            \State \Return beta
+        \EndFunction
+        \item[]
+        \Function{encrypt}{$\text{beta}, \text{message}$}
+            \State index $\leftarrow$ 0
+            \State ciphertext $\leftarrow$ create empty list of size equal to message\_length
+            \For{index $\gets 0$ to message\_length}
+                \State ciphertext[index] $\leftarrow$ beta[index] $\times$ message[index]
+            \EndFor
+            \State \Return sum(ciphertext)
+        \EndFunction
+        \item[]
+        \Function{decrypt}{$\text{ciphertext}, r, q$}
+            \State \Return (inverse\_mod(r, q) $\times$ ciphertext) $\bmod $ $q$
+        \EndFunction
+        \item[]
+        \algstore{example3}
+    \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+    \begin{algorithmic}
+        \algrestore{example3}
+        \item[] \Comment{breaks the cryptosystem if LLL produces shortest vector (not just shorter)}
+        \Function{break}{$\text{ciphertext}$}
+            \State L $\leftarrow$ identity matrix with size equal to length of ciphertext $+ 1$
+            \State L[last column] $\leftarrow$ beta $\cup$ $[-1 \times \text{ciphertext}]$ 
+            \State L $\leftarrow$ LLL(L)
+            \State \Return the first row of L that contains only 0s and 1s
+        \EndFunction
+        \item[]
+        \State w $\leftarrow$ create\_superincreasing\_sequence(10, message\_length)
+        \State q $\leftarrow$ random prime greater than sum(w) $+ 1$
+        \State r $\leftarrow$ random number $\in (1, q)$
+        \State beta $\leftarrow$ create\_public\_key(w, r, q)
+        \State message $\leftarrow$ create a dummy binary message of size equal to message\_length
+        \State ciphertext $\leftarrow$ encrypt(beta, message)
+        \State break(ciphertext) $\stackrel{?}{=}$ message
+    \end{algorithmic}
+\end{algorithm}

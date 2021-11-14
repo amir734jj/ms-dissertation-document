@@ -1,0 +1,514 @@
+\chapter{Quotient Rings and Field Extensions}
+
+In this section we describe a method for producing field extension of a given
+field. If $F$ is a field, then a
+\index{field extension}%
+\emph{field extension} is a field $K$ that contains $F $. For example,
+$\mathbb{C}$ is a field extension of $\mathbb{R}$ since $\mathbb{C}$ is a
+field containing $\mathbb{R}$. Similarly, $\mathbb{C}$ is a field extension of
+$\mathbb{Q}$. For coding theory we need field extensions of $\mathbb{Z}_{2}$.
+To produce a field extension of a field $F$ we will use a polynomial $f(x)$
+with coefficients in $F$, and we will produce it by mimicing the idea of
+producing the integers modulo $n$ by starting with the integers and a fixed
+integer $n$. In order to do this we need to know that the arithmetic of
+polynomials is sufficiently similar to the arithmetic of integers. In the
+first section of this chapter we see that notions relating to divisibility
+work just as well for polynomials over a field as for the integers.
+
+\section{Arithmetic of Polynomial Rings}
+
+Let $F$ be a field, and let $F[x]$ be the ring of polynomials in the
+indeterminate $x$. High school students study the arithmetic of this ring
+without saying so in so many words, at least for the case $F=\mathbb{R}$. In
+this section we make a formal study of this arithmetic, seeing that much of
+what we did for integers above can be done in the ring $F[x]$. We start with
+the most basic definition.
+
+\begin{definition}
+Let $f$ and $g$ be polynomials in $F[x]$. Then we say that $f$ divides $g$, or
+$g$ is divisible by $f$, if there is a polynomial $h$ with $g=fh$.
+\end{definition}
+
+The greatest common divisor of two integers $a$ and $b$ is the largest integer
+dividing both $a$ and $b$. This definition needs to be modified a little for
+polynomials. While we cannot talk about \textquotedblleft
+largest\textquotedblright\ polynomial in the same manner as for integers, we
+can talk about the degree of a polynomial. Recall that the
+\index{degree of a polynomial}%
+\emph{degree} of a nonzero polynomial $f$ is the largest integer $m$ for which
+the coefficient of $x^{m}$ is nonzero. If $f(x)=a_{n}x^{n}+\cdots+a_{1}%
+x+a_{0}$ with $a_{n}\neq0$, then the degree of $f(x)$ is $n$. We write
+$\deg(f)$ for the degree of $f$. The degree function allows us to measure size
+of polynomials. However, there is one extra complication. For example, any
+polynomial of the form $ax^{2}$ with $a\neq0$ divides $x^{2}$ and $x^{3}$.
+Thus, there isn't a unique polynomial of highest degree that divides a pair of
+polynomials. To pick one out, we consider
+\index{monic polynomial}%
+\emph{monic} polynomials, polynomials whose
+\index{leading coefficient}%
+\emph{leading coefficient} is $1$. For example, $x^{2}$ is the monic
+polynomial of degree $2$ that divides both $x^{2}$ and $x^{3}$, while $5x^{2}$
+is not monic. As a piece of terminology, we will refer to an element $f\in
+F[x]$ as a \emph{polynomial over }$F$.
+
+\begin{definition}
+Let $f$ and $g$ be polynomials over $F$, not both zero. Then a greatest common
+divisor of $f$ and $g$ is a monic polynomial of largest degree that divides
+both $f$ and $g$.
+\end{definition}
+
+The problem with the definition above has to do with uniqueness. Could there
+be more than one greatest common divisor of a pair of polynomials? The answer
+is no, and we will prove this after we prove the analogue of the division algorithm.
+
+The main reason for assuming that the coefficients of our polynomials lie in a
+field is to ensure that the division algorithm is valid. Before we prove it,
+we need a simple lemma about degrees. For convenience, we set $\deg
+(0)=-\infty$. We also make the convention that $-\infty+-\infty=-\infty$ and
+$-\infty+n=-\infty$ for any integer $n$. The point of these conventions is to
+make the statement in the following lemma and other results as simple as possible.
+
+\begin{lemma}
+\label{degree}Let $F$ be a field and let $f$ and $g$ be polynomials over $F$.
+Then $\deg(fg)=\deg(f)+\deg(g)$.
+\end{lemma}
+
+\begin{proof}
+If either $f=0$ or $g=0$, then the equality $\deg(fg)=\deg(f)+\deg(g)$ is true
+by our convention above. So, suppose that $f\neq0$ and $g\neq0$. Write
+$f=a_{n}x^{n}+\cdots+a_{0}$ and $g=b_{m}x^{m}+\cdots+b_{0}$ with $a_{n}\neq0$
+and $b_{m}\neq0$. Therefore, $\deg(f)=n$ and $\deg(g)=m$. The definition of
+polynomial multiplication yields
+\[
+fg=(a_{n}b_{m})x^{n+m}+(a_{n}b_{m-1}+a_{n-1}b_{m})x^{n+m-1}+\cdots+a_{0}%
+b_{0}.
+\]
+Now, since the coefficients come from a field, which has no zero divisors, we
+can conclude that $a_{n}b_{m}\neq0$, and so $\deg(fg)=n+m=\deg(f)+\deg(g)$, as desired.
+\end{proof}
+
+
+\begin{proposition}
+[Division Algorithm]%
+\index{division algorithm for polynomials}%
+Let $F$ be a field and let $f$ and $g$ be polynomials over $F$ with $f$
+nonzero. Then there are unique polynomials $q$ and $r$ with $g=qf+r$ with
+$\deg(r)<\deg(f)$.
+\end{proposition}
+
+\begin{proof}
+Let
+\[
+\mathcal{S}=\left\{  t\in F[x]:t=g-qf\text{ for some }q\in F[x]\right\}  .
+\]
+Then $\mathcal{S}$ is a nonempty set of polynomials, since $g\in\mathcal{S}$.
+Thus, by the well ordering property of the integers, there is a polynomial $r$
+of least degree in $\mathcal{S}$. By definition, there is a $q\in F[x]$ with
+$r=g-qf$, so $g=qf+r$. We need to see that $\deg(r)<\deg(f)$. If, on the other
+hand, $\deg(r)\geq\deg(f)$, say $n=\deg(f)$ and $m=\deg(r)$. If $f=a_{n}%
+x^{n}+\cdots+a_{0}$ and $r=r_{m}x^{m}+\cdots+r_{0}$ with $a_{n}\neq0$ and
+$r_{m}\neq0$, then by thinking about the method of long division of
+polynomials, we realize that we may write $r=(r_{m}a_{n}^{-1})x^{m-n}%
+f+r^{\prime}$ with $\deg(r^{\prime})<m=\deg(r)$. But then%
+\[
+g=qf+r=qf+(r_{m}a_{n}^{-1})x^{m-n}f+r^{\prime}=(q+r_{m}a_{n}^{-1}%
+x^{m-n})f+r^{\prime},
+\]
+which shows that $r^{\prime}\in\mathcal{S}$. Since $\deg(r^{\prime})<\deg(r)$,
+this would be a contradiction to the choice of $r$. Therefore, $\deg
+(r)\geq\deg(f)$ is false, so $\deg(r)<\deg(f)$, as we wanted to prove. This
+proves existence of $q$ and $r$. For uniqueness, suppose that $g=qf+r$ and
+$g=q^{\prime}f+r^{\prime}$ for some polynomials $q,q^{\prime}$ and
+$r,r^{\prime}$ in $F[x]$, and with $\deg(r),\deg(r^{\prime})<\deg(f) $. Then
+$qf+r=q^{\prime}f+r^{\prime}$, so $(q-q^{\prime})f=r^{\prime}-r$. Taking
+degrees and using the lemma, we have
+\[
+\deg(q^{\prime}-q)+\deg(f)=\deg(r^{\prime}-r).
+\]
+Since $\deg(r)<\deg(f)$ and $\deg(r^{\prime})<\deg(f)$, we have $\deg
+(r^{\prime}-r)<\deg(f)$. However, if $\deg(q^{\prime}-q)\geq0$, this is a
+contradiction to the equation above. The only way for this to hold is for
+$\deg(q^{\prime}-q)=\deg(r^{\prime}-r)=-\infty$. Thus, $q^{\prime
+}-q=0=r^{\prime}-r$, so $q^{\prime}=q$ and $r^{\prime}=r$, proving uniqueness.
+\end{proof}
+
+
+We now prove the existence of greatest common divisors of polynomials, and
+also prove the representation theorem analogous to Proposition
+\ref{gcdrepforintegers}
+
+\begin{proposition}
+Let $F$ be a field and let $f$ and $g$ be polynomials over $F$, not both zero.
+Then $\gcd(f,g)$ exists and is unique. Furthermore, there are polynomials $h$
+and $k$ with $\gcd(f,g)=hf+kg$.
+\end{proposition}
+
+\begin{proof}
+We will prove this by proving the representation result. Let
+\[
+\mathcal{S}=\left\{  hf+kg:h,k\in F[x]\right\}  .
+\]
+Then $\mathcal{S}$ contains nonzero polynomials as $f=1\cdot f+0\cdot g$ and
+$g=0\cdot f+1\cdot g$ both lie in $\mathcal{S}$. Therefore, there is a nonzero
+polynomial $d\in\mathcal{S}$ of smallest degree by the well ordering
+principle. Write $d=hf+kg$ for some $h,k\in F[x]$. By dividing by the leading
+coefficient of $d$, we may assume that $d$ is monic without changing the
+condition $e\in\mathcal{S}$. We claim that $d=\gcd(f,g)$. To show that $e$ is
+a common divisor of $f$ and $g$, first consider $f$. By the division
+algorithm, we may write $f=qd+r$ for some polynomials $q$ and $r$, and with
+$\deg(r)<\deg(d)$. Then
+\begin{align*}
+r  & =f-qd=f-q(hf+kg)\\
+& =(1-qh)f+(-qk)g.
+\end{align*}
+This shows $r\in\mathcal{S}$. If $r\neq0$, this would be a contradiction to
+the choice of $d$ since $\deg(r)<\deg(d)$. Therefore, $r=0$, which shows that
+$f=qd$, and so $d$ divides $f$. Similarly, $d$ divides $g$. Thus, $d$ is a
+common divisor of $f$ and $g$. If $e$ is any other common divisor of $f$ and
+$g$, then $e$ divides any combination of $f$ and $g$; in particular, $e$
+divides $hf+kg=d$. This forces $\deg(e)\leq\deg(d)$ by Lemma \ref{degree}.
+Thus, $d$ is the monic polynomial of largest degree that divides $f$ and $g$,
+so $d$ is a greatest common divisor of $f$ and $g$. This proves everything but
+uniqueness. For that, suppose that $d$ and $d^{\prime}$ are both monic common
+divisors of $f$ and $g$ of largest degree. By the proof above, we may write
+both $d$ and $d^{\prime}$ as combinations of $f$ and $g$. Also, from this, the
+argument above shows that $d$ divides $d^{\prime}$ and vice-versa. If
+$d^{\prime}=ad$ and $d=bd^{\prime}$, then $d=bd^{\prime}=abd$. Taking degrees
+shows that $\deg(ab)=0$, which means that $a$ and $b$ are both constants. But,
+since $d$ and $d^{\prime}$ are monic, for $d^{\prime}=ad$ to be monic, $a=1$.
+Thus, $d^{\prime}=ad=d$.
+\end{proof}
+
+
+\section{Ideals and Quotient Rings}
+
+We will construct extension fields of a field $F$ by starting with an ideal of
+the polynomial ring $F[x]$ and constructing the associated quotient ring. We
+must therefore begin by defining ideals.
+
+\begin{definition}%
+\index{ideal}%
+Let $R$ be a ring. An ideal $I$ is a nonempty subset of $R$ such that (i) if
+$a,b\in I$, then $a+b\in I$, and (ii) if $a\in I$ and $r\in R$, then $ar\in I$
+and $ra\in I$.
+\end{definition}
+
+This definition says that an ideal is a subset of $R$ closed under addition
+that satisfies a strengthened form of closure under multiplication. Not only
+is the product of two elements of $I$ also in $I$, but that the product of an
+element of $I$ and any element of $r$ is an element of $I$.
+
+\begin{example}
+Let $R=\mathbb{Z}$. If $n$ is an integer, let $n\mathbb{Z}$ be the set of all
+multiples of $\mathbb{Z}$. That is,
+\[
+n\mathbb{Z}=\left\{  na:a\in\mathbb{Z}\right\}  .
+\]
+To see that this set is an ideal, first consider addition. if $x,y\in
+n\mathbb{Z}$, then there integers $a$ and $b$ with $x=na$ and $y=nb$. Then
+$x+y=na+nb=n(a+b)$. Therefore, $x+y\in n\mathbb{Z}$. Second, for
+multiplication, let $x=na\in n\mathbb{Z}$ and let $r\in\mathbb{Z}$. Then
+$rx=xr=r(na)=n(ra)$, a multiple of $n$. Therefore, $rx\in n\mathbb{Z}$. This
+proves that $n\mathbb{Z}$ is an ideal. If $n>0$, notice that
+\[
+n\mathbb{Z=}\left\{  0,n,2n,\ldots,-n,-2n,\ldots\right\}
+\]
+is the same as the equivalence class of $0$ under the relation congruence
+modulo $n$. This is an important connection that we will revisit.
+\end{example}
+
+\begin{example}
+Let $R=F[x]$ be the ring of polynomials over a field, and let $f\in F[x]$.
+Let
+\[
+I=\left\{  gf:g\in F[x]\right\}  ,
+\]
+the set of all multiples of $f$. This set is an ideal of $F[x]$ by the same
+calculation as in the previous example. However, we repeat this calculation.
+For closure under addition, let $h,k\in I$. Then $h=gf$ and $k=g^{\prime}f$
+for some polynomials $g$ and $g^{\prime}$. Then $h+k=gf+g^{\prime
+}f=(g+g^{\prime})f$, a multiple of $f$, so $h+k\in I$. For multiplication, let
+$h=gf\in I$, and let $a\in F[x]$. Then $ah=ha=agf=(ag)f$, a multiple of $f$,
+so $ah\in I$. Thus, $I$ is an ideal of $F[x]$. This ideal is typically denoted
+by $(f)$.
+\end{example}
+
+\begin{example}
+Let $R$ be any commutative ring, and let $a\in R$. Let
+\[
+aR=\left\{  ar:r\in R\right\}  .
+\]
+We can consider $aR$ to be the set of multiples of $a$. We show that $aR$ is
+an ideal of $R$. First, let $x,y\in aR$. Then $x=ar$ and $y=as$ for some
+$r,s\in R$. Then $x+y=ar+as=a(r+s)$, so $x+y\in aR$. Next, let $x=ar\in aR$
+and let $z\in R$. Then $xz=arz=a(rz)\in aR$. Also, $zx=xz$ since $R$ is
+commutative, so $zx\in aR$. Therefore, $aR$ is an ideal of $R$. This
+construction generalizes the previous two examples. The ideal $aR$ is
+typically called the ideal
+\index{ideal generated by an element}%
+\emph{generated by} $a$. It is often written as $(a)$.
+\end{example}
+
+\begin{example}
+Let $R$ be any commutative ring, and let $a,b\in R$. Set
+\[
+I=\left\{  ar+bs:r,s\in R\right\}  .
+\]
+To see that $I$ is an ideal of $R$, first let $x,y\in I$. Then $x=ar+bs$ and
+$y=ar^{\prime}+bs^{\prime}$ for some $r,s,r^{\prime},s^{\prime}\in R$. Then
+\begin{align*}
+x+y  &  =(ar+bs)+(ar^{\prime}+bs^{\prime})\\
+&  =(ar+ar^{\prime})+(bs+bs^{\prime})\\
+&  =a(r+r^{\prime})+b(s+s^{\prime})\in I
+\end{align*}
+by the associative and distributive properties. Next, let $x\in I$ and $z\in
+R$. Again, $x=ar+bs$ for some $r,s\in R$. Then
+\begin{align*}
+xz  &  =(ar+bs)z=(ar)z+(bs)z\\
+&  =a(rz)+b(sz).
+\end{align*}
+This calculation shows that $xz\in I$. Again, since $R$ is commutative,
+$zx=xz$, so $zx\in I$. Thus, $I$ is an ideal of $R$. We can generalize this
+example to any finite number of elements of $R$: given $a_{1},\ldots,a_{n}\in
+R$, if
+\[
+J=\left\{  a_{1}r_{1}+\cdots+a_{n}r_{n}:r_{i}\in R\text{ for each }i\right\}
+,
+\]
+then a similar argument will show that $J$ is an ideal of $R$. The ideal $J$
+is typically referred to as the ideal generated by the elements $a_{1}%
+,\ldots,a_{n}$, and it is often denoted by $(a_{1},\ldots,a_{n})$.
+\end{example}
+
+The division algorithm has a nice application to the structure of ideals of
+$\mathbb{Z}$ or of $F[x]$. We prove the result for polynomials, leaving the
+analogous result for $\mathbb{Z}$ to the reader.
+
+\begin{theorem}
+Let $F$ be a field. Then any ideal of $F[x]$ can be generated by a single
+polynomial. That is, if $I$ is an ideal of $F[x]$, then there is a polynomial
+$f$ with $I=(f)=\left\{  fg:g\in F[x]\right\}  $.
+\end{theorem}
+
+\begin{proof}
+Let $I$ be an ideal of $F[x]$. If $I=\left\{  0\right\}  $, then $I=(0)$. So,
+suppose that $I$ is nonzero. Let $f\in I$ be a nonzero polynomial of least
+degree. We claim that $I=(f)$. To prove this, let $g\in I$. By the division
+algorithm, there are polynomials $q,r$ with $g=qf+r$ and $\deg(r)<\deg(f)$.
+Since $f\in I$, the product $qf\in I$, and thus $g-qf\in I$ as $g\in I$. We
+conclude that $r\in I$. However, the assumption on the degree of $f$ shows
+that the condition $\deg(r)<\deg(f)$ forces $r=0$. Thus, $g=qf\in(f) $. This
+proves $I\subseteq(f)$. Since every multiple of $f$ is in $I$, the reverse
+inclusion $(f)\subseteq I$ is also true. Therefore, $I=(f)$.
+\end{proof}
+
+
+We can give an ideal theoretic description of greatest common divisors in
+$\mathbb{Z}$ and in $F[x]$. Suppose that $f$ and $g$ are polynomials over a
+field $F$. If $\gcd(f,g)=d$, then we have proved that $d=fh+gk$ for some
+polynomials $h,k$. Therefore, $d$ is an element of the ideal $I=\left\{
+fs+gt:s,t\in F[x]\right\}  $. However, since $d$ divides $f$ and $g$, it
+follows that $d$ divides every element of $I$. Therefore, $I=(d)$ is simply
+the set of multiples of $d$. Therefore, one can identify the greatest common
+divisor of $f$ and $g$ by identifying a monic polynomial $d$ satisfying
+$I=(d)$.
+
+We now use ideals to define quotient rings. In order to define them, we first
+need to specify what are their elements. These are cosets, which we now
+define. We have seen cosets when we discussed decoding with the Hamming code.
+These cosets arose from a subspace of a vector space. The idea here is
+essentially the same; the only difference is that we start with an ideal of a
+ring instead of a subspace of a vector space.
+
+\begin{definition}
+Let $R$ be a ring and let $I$ be an ideal of $R$. If $a\in R$, then the coset
+$a+I$ is defined as $a+I=\left\{  a+x:x\in I\right\}  $.
+\end{definition}
+
+Recall the description of equivalence classes for the relation congruence
+modulo $n$. For example, if $n=5$, then we have five equivalence classes, and
+they are
+\begin{align*}
+\overline{0}  &  =\left\{  0,5,10,\ldots,-5,-10,\ldots\right\}  ,\\
+\overline{1}  &  =\left\{  1,6,11,\ldots,-4,-9,-14,\ldots\right\}  ,\\
+\overline{2}  &  =\left\{  2,7,12,\ldots,-3,-8,-13,\ldots\right\}  ,\\
+\overline{3}  &  =\left\{  3,8,13,\ldots,-2,-7,-12,\ldots\right\}  ,\\
+\overline{4}  &  =\left\{  4,9,14,\ldots,-1,-6,-11,\ldots\right\}  .
+\end{align*}
+By the first example above, the set $5\mathbb{Z}$ of multiples of $5$ forms an
+ideal of $\mathbb{Z}$. These five equivalence classes can be described as
+cosets, namely,
+\begin{align*}
+\overline{0}  &  =0+5\mathbb{Z},\\
+\overline{1}  &  =1+5\mathbb{Z},\\
+\overline{2}  &  =2+5\mathbb{Z},\\
+\overline{3}  &  =3+5\mathbb{Z},\\
+\overline{4}  &  =4+5\mathbb{Z}.
+\end{align*}
+In general, for any integer $a$, we have $a+5\mathbb{Z}=\overline{a}$. Thus,
+cosets for the ideal $5\mathbb{Z}$ are the same as equivalence classes modulo
+$5 $. In fact, more generally, if $n$ is any positive integer, then the
+equivalence class $\overline{a}$ of an integer $a$ modulo $n$ is the coset
+$a+n\mathbb{Z}$ of the ideal $n\mathbb{Z}$.
+
+We have seen that an equivalence classes can have different names. Modulo $5$,
+we have $\overline{1}=\overline{6}$ and $\overline{2}=\overline{-3}%
+=\overline{22}$, for example. Similarly, cosets can be represented in
+different ways. If $R=F[x]$ and $I=xR$, the ideal of multiples of the
+polynomial $x$, then $0+I=x+I=x^{2}+I=4x^{17}+I$. Also, $1+I=(x+1)+I$. For
+some terminology, we refer to $a$ as a
+\index{coset representative}%
+\emph{coset representative} of $a+I$. One important thing to remember is that
+the coset representative is not unique, as the examples above demonstrate.
+
+When we defined operations on $\mathbb{Z}_{n}$, we defined them with the
+formulas $\overline{a}+\overline{b}=\overline{a+b}$ and $\overline{a}%
+\cdot\overline{b}=\overline{ab}$. Since these equivalence classes are the same
+thing as cosets for $n\mathbb{Z}$, this leads us to consider a generalization.
+If we replace $\mathbb{Z}$ by any ring and $n\mathbb{Z}$ by any ideal, we can
+mimic these formulas to define operations on cosets. First, we give a name to
+the set of cosets.
+
+\begin{definition}
+If $I$ is an ideal of a ring $R$, let $R/I$ denote the set of cosets of $I$.
+In other words, $R/I=\left\{  a+I:a\in R\right\}  $.
+\end{definition}
+
+We now define operations on $R/I$ in a manner like the operations on
+$\mathbb{Z}_{n}$. We define
+\begin{align*}
+\left(  a+I\right)  +\left(  b+I\right)   &  =(a+b)+I,\\
+\left(  a+I\right)  \cdot\left(  b+I\right)   &  =(ab)+I.
+\end{align*}
+In other words, to add or multiply two cosets, first add or multiply their
+coset representatives, then take the corresponding coset. As with the
+operations on $\mathbb{Z}_{n}$, we have to check that these formulas make
+sense. In other words, the name we give to a coset should not affect the value
+we get when adding or multiplying. We first need to know when two elements
+represent the same coset. To help with the proof, we point out two simple
+properties. If $I$ is an ideal, then $0\in I$. Furthermore, if $r\in I $, then
+$-r\in I$. The proofs of these facts are left as exercises.
+
+\begin{lemma}
+Let $I$ be an ideal of a ring $R$. If $a,b\in R$, then $a+I=b+I$ if and only
+if $a-b\in I$.
+\end{lemma}
+
+\begin{proof}
+Let $a,b\in R$. First suppose that $a+I=b+I$. From $0\in I$ we get $a=a+0\in
+a+I$, so $a\in b+I$. Therefore, there is an $x\in I$ with $a=b+x$. Thus,
+$a-b=x\in I$. Conversely, suppose that $a-b\in I$. If we set $x=a-b$, an
+element of $I$, then $a=b+x$. This shows $a\in b+I$. So, for any $y\in I$, we
+have $a+y=b+(x+y)\in I$, as $I$ is closed under addition. Therefore,
+$a+I\subseteq b+I$. The reverse inclusion is similar; by using $-x=b-a$, again
+an element of $I$, we will get the inclusion $b+I\subseteq a+I$, and so
+$a+I=b+I$.
+\end{proof}
+
+
+In fact, we can generalize the fact that equivalence classes modulo $n$ are
+the same thing as cosets for $n\mathbb{Z}$. Given an ideal, we can define an
+equivalence relation by mimicing congruence modulo $n$. To phrase this
+relation in a new way, $a\equiv b\operatorname{mod}n$ if and only if $a-b$ is
+a multiple of $n$, so $a\equiv b\operatorname{mod}n$ if and only if $a-b\in
+n\mathbb{Z} $. Thus, given an ideal $I$ of a ring $R$, we may define a
+relation by $x\equiv y\operatorname{mod}I$ if $x-y\in I$. One can prove in the
+same manner as for congruence modulo $n$ that this is an equivalence relation,
+and that, for any $a\in R$, the coset $a+I$ is the equivalence class of $a$.
+
+\begin{lemma}
+Let $I$ be an ideal of a ring $R$. Let $a,b,c,d\in R$.
+
+\begin{enumerate}
+\item If $a+I=c+I$ and $b+I=d+I$, then $a+b+I=c+d+I$.
+
+\item If $a+I=c+I$ and $b+I=d+I$, then $ab+I=cd+I$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Suppose that $a,b,c,d\in R$ satisfy $a+I=c+I$ and $b+I=d+I$. To prove the
+first statement, by the lemma we have elements $x,y\in I$ with $a-c=x$ and
+$b-d=y$. Then
+\begin{align*}
+(a+b)-(c+d)  & =a+b-c-d\\
+& =(a-c)+(b-d)\\
+& =x+y\in I.
+\end{align*}
+Therefore, again by the lemma, $(a+b)+I=(c+d)+I$. For the second statement, we
+rewrite the equations above as $a=c+x$ and $b=d+y$. Then
+\begin{align*}
+ab  & =(c+x)(d+y)=c(d+y)+x(d+y)\\
+& =cd+(cy+xd+xy).
+\end{align*}
+Since $x,y\in I$, the three elements $cy$, $xd$, $xy$ are all elements of $I$.
+Thus, the sum $cy+xd+xy\in I$. This shows us that $ab-cd\in I$, so the lemma
+yields $ab+I=cd+I$.
+\end{proof}
+
+
+The consequence of the lemma is exactly that our coset operations make sense.
+Thus, we can ask whether or not $R/I$ is a ring. The answer is yes, and the
+proof is easy, and is exactly parallel to the proof for $\mathbb{Z}_{n}$.
+
+\begin{theorem}
+Let $I$ be an ideal of a ring $R$. Then $R/I$, together with the operations of
+coset addition and multiplication, forms a ring.
+\end{theorem}
+
+\begin{proof}
+We have several properties to verify. Most follow immediately from the
+definition of the operations and from the ring properties of $R$. For example,
+to prove that coset addition is commutative, we see that for any $a,b\in R$,
+we have
+\begin{align*}
+\left(  a+I\right)  +\left(  b+I\right)   & =(a+b)+I\\
+& =(b+a)+I\\
+& =\left(  b+I\right)  +\left(  a+I\right)  .
+\end{align*}
+This used exactly the definition of coset addition and commutativity of
+addition in $R$. Most of the other ring properties hold for similar reasons,
+so we only verify those that are a little different. For existence of an
+additive identity, we have the additive identity $0$ of $R$, and it is natural
+to guess that $0+I$ is the identity for $R/I$. To see that this is indeed
+true, let $a+I\in R/I$. Then
+\[
+\left(  a+I\right)  +\left(  0+I\right)  =(a+0)+I=a+I.
+\]
+Thus, $0+I$ is the additive identity for $R/I$. Similarly $1+I$ is the
+multiplicative identity, since
+\[
+\left(  a+I\right)  \cdot\left(  1+I\right)  =(a\cdot1)+I=a+I
+\]
+and
+\[
+\left(  1+I\right)  \cdot\left(  a+I\right)  =(1\cdot a)+I=a+I
+\]
+for all $a+I\in R/I$. Finally, the additive inverse of $a+I$ is $-a+I$ since
+\[
+\left(  a+I\right)  +\left(  -a+I\right)  =(a+(-a))+I=0+I.
+\]
+Therefore, $R/I$ is a ring.
+\end{proof}
+
+
+The ring $R/I$ is called a
+\index{quotient ring}%
+\emph{quotient ring} of $R$. This idea allows us to construct new rings from
+old rings. For example, the ring $\mathbb{Z}_{n}$ is really the same thing as
+the quotient ring $\mathbb{Z}/n\mathbb{Z}$, since we have identified the
+equivalence classes modulo $n$; that is, the elements of $\mathbb{Z}_{n}$,
+with the cosets of $n\mathbb{Z}$; i.e., the elements of $\mathbb{Z}%
+/n\mathbb{Z}$. It is this construction applied to polynomial rings that we
+will use to build extension fields. We recall Proposition \ref{Zpafield} above
+that says $\mathbb{Z}_{n}$ is a field if and only if $n$ is a prime. To
+generalize this result to polynomials, we first need to define the polynomial
+analogue of a prime number.
+
+\begin{definition}%
+\index{irreducible polynomial}%
+Let $F$ be a field. A nonconstant polynomial $f\in F[x]$ is said to be
+irreducible over $F$ if whenever $f$ can be factored as $f=gh$, then either
+$g$ or $h$ is a constant polynomial.
+\end{definition}
+
